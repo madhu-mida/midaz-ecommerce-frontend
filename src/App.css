@@ -167,9 +167,10 @@ body {
 }
 
 .productListingPage-products {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 85%;
   margin: auto;
+  padding: 5px;
 }
 
 .productListingPage-top-grid-dropdown {
@@ -232,6 +233,7 @@ body {
 
 .pdp-size-names {
   display: flex;
+  padding: 1px;
 }
 
 .pdp-price-section {
@@ -247,6 +249,12 @@ body {
 }
 
 .pdp-size-details {
+  text-align: left;
+  margin-top: 1rem;
+  font-size: 16px;
+}
+
+.pdp-prod-details {
   text-align: left;
   margin-top: 1rem;
   font-size: 16px;

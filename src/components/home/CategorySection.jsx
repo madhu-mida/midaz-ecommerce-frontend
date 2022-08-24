@@ -4,9 +4,13 @@ import dress from "./category-images/dress.jpeg";
 import skirt from "./category-images/skirt.jpeg";
 import tops from "./category-images/tops.jpeg";
 import sweater from "./category-images/sweater.jpeg";
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom"
 
 const CategorySection = () => {
+
+    let navigate = useNavigate();
+
     return (
         <div className="category" style={{ padding: "40px" }}>
             <span style={{
@@ -19,7 +23,7 @@ const CategorySection = () => {
                         <img className="category-img" src={active} />
                     </div>
                     <div className="category-name">
-                        <span>ACTIVE WEAR</span>
+                        <span onClick={() => navigate("/products/active-wear", { replace: true })}>ACTIVE WEAR</span>
                     </div>
                 </div>
                 <div className="categrory-coats-jackets">
@@ -27,7 +31,7 @@ const CategorySection = () => {
                         <img className="category-img" src={coats} />
                     </div>
                     <div className="category-name">
-                        <span>COATS & JACKETS</span>
+                        <span onClick={() => navigate("/products/coats-jackets", { replace: true })}>COATS & JACKETS</span>
                     </div>
 
                 </div>
@@ -36,7 +40,7 @@ const CategorySection = () => {
                         <img className="category-img" src={dress} />
                     </div>
                     <div className="category-name">
-                        <span>DRESSES</span>
+                        <span onClick={() => navigate("/products/dresses", { replace: true })}>DRESSES</span>
                     </div>
 
                 </div>
@@ -45,7 +49,7 @@ const CategorySection = () => {
                         <img className="category-img" src={skirt} />
                     </div>
                     <div className="category-name">
-                        <span>SKIRTS</span>
+                        <span onClick={() => navigate("/products/skirts", { replace: true })}>SKIRTS</span>
                     </div>
 
                 </div>
@@ -54,7 +58,7 @@ const CategorySection = () => {
                         <img className="category-img" src={sweater} />
                     </div>
                     <div className="category-name">
-                        <span>SWEATERS</span>
+                        <span onClick={() => navigate("/products/sweaters", { replace: true })}>SWEATERS</span>
                     </div>
 
                 </div>
@@ -63,7 +67,7 @@ const CategorySection = () => {
                         <img className="category-img" src={tops} />
                     </div>
                     <div className="category-name">
-                        <span>TOPS</span>
+                        <span onClick={() => navigate("/products/tops", { replace: true })}>TOPS</span>
                     </div>
 
                 </div>

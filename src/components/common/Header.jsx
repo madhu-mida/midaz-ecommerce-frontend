@@ -1,3 +1,5 @@
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom"
 import { FaInstagram, FaYoutube } from "react-icons/fa";
 import { IoSearchOutline, IoCartOutline } from "react-icons/io5";
 import { RiAccountBoxLine } from "react-icons/ri";
@@ -6,7 +8,23 @@ import { Input } from "@mui/material";
 import { Nav, Navbar, Container } from "react-bootstrap";
 import logo from '../../logo.png';
 const ariaLabel = { 'aria-label': 'description' };
+
+
 const Header = () => {
+    const { loginWithRedirect } = useAuth0();
+    const { user, isAuthenticated, isLoading } = useAuth0();
+    let navigate = useNavigate();
+
+    function checkAuthentication() {
+        console.log("Clicked")
+        if (isAuthenticated) {
+            console.log("You are authenticated")
+            navigate("/account", { replace: true });
+        } else {
+            loginWithRedirect();
+        }
+    }
+
     return (
         <div>
             <div id="top-header">
@@ -39,7 +57,8 @@ const Header = () => {
                                 <RiAccountBoxLine />
                             </div>
                         </IconContext.Provider>
-                        <span style={{ marginLeft: '10px' }}>ACCOUNT</span>
+                        <span onClick={() => { checkAuthentication() }} style={{ marginLeft: '10px' }}>ACCOUNT</span>
+                        {/* <button onClick={() => loginWithRedirect()}>Log In</button> */}
 
                     </div>
                     <div id="header-cart">

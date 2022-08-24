@@ -4,8 +4,31 @@ import { FiGrid } from "react-icons/fi"
 import { FaRegSquare } from "react-icons/fa"
 import { VscListFlat } from "react-icons/vsc"
 import { IconContext } from "react-icons";
+import { useEffect, useState } from "react";
+import SweetPagination from "sweetpagination";
+import { Link } from "react-router-dom";
 
-const ProductListingPage = () => {
+
+const ProductListingPage = ({ catId }) => {
+
+    const [products, setProducts] = useState(null);
+    const [currentPageData, setCurrentPageData] = useState(null);
+
+    const URL = "http://localhost:4000/products/";
+
+
+
+    const getProducts = async () => {
+        const data = await fetch(URL + `${catId}`).then(res => res.json());
+        setProducts(data);
+        setCurrentPageData(data.slice(0, 11));
+        console.log(data)
+    }
+
+
+    useEffect(() => {
+        getProducts()
+    }, [])
     return (
         <div className="ProductListingPage">
             <div className="productListingPage-top-sort">
@@ -50,78 +73,41 @@ const ProductListingPage = () => {
             </div>
             <div className="productListingPage-products">
                 <Row md={4} lg={4}>
-                    <Col>
-                        <CCard style={{
-                            width: '18rem', border: 'None', marginRight: 'auto',
-                            marginLeft: 'auto'
-                        }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06479_720x.jpg?v=1655797195" />
-                            <CCardBody>
-                                <CCardText>
-                                    <p>Ziya Cotton</p>
-                                    <p>$ 65</p>
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
-                    </Col>
-                    <Col>
-                        <CCard style={{ width: '18rem' }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06363_720x.jpg?v=1655796706" />
-                            <CCardBody>
-                                <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
-                    </Col>
-                    <Col>
 
-                        <CCard style={{ width: '18rem' }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06363_720x.jpg?v=1655796706" />
-                            <CCardBody>
-                                <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
+                    {
+                        products && currentPageData && currentPageData.map((element) => {
+                            return (
+                                <Col>
+                                    <CCard style={{
+                                        width: '18rem', border: 'None', marginRight: 'auto',
+                                        marginLeft: 'auto'
+                                    }}>
+                                        <Link style={{ textDecoration: "none" }} to={`/product/${element.productId}`}>
+                                            <CCardImage orientation="top" src={element.imageUrl ? element.imageUrl : 'https://mrsldna.org/wp-content/uploads/2019/03/product-placeholder.gif'} />
+                                        </Link>
+                                        <CCardBody>
+                                            <CCardText>
+                                                <p>{element.name}</p>
+                                                <p>$ {element.price}</p>
+                                            </CCardText>
+                                        </CCardBody>
+                                    </CCard>
+                                </Col>
+                            );
+                        })
+                    }
 
-                    </Col>
-                    <Col>
 
-                        <CCard style={{ width: '18rem' }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06363_720x.jpg?v=1655796706" />
-                            <CCardBody>
-                                <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
+                </Row>
 
-                    </Col>
-                    <Col>
-
-                        <CCard style={{ width: '18rem' }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06363_720x.jpg?v=1655796706" />
-                            <CCardBody>
-                                <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
-
-                    </Col>
-                    <Col>
-
-                        <CCard style={{ width: '18rem' }}>
-                            <CCardImage orientation="top" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06363_720x.jpg?v=1655796706" />
-                            <CCardBody>
-                                <CCardText>
-                                    Some quick example text to build on the card title and make up the bulk of the card's content.
-                                </CCardText>
-                            </CCardBody>
-                        </CCard>
-
-                    </Col>
+                <Row>
+                    {products && currentPageData && <SweetPagination
+                        currentPageData={setCurrentPageData}
+                        dataPerPage={12}
+                        getData={products}
+                        navigation={true}
+                    //getStyle={'style-2'}
+                    />}
                 </Row>
             </div>
 
