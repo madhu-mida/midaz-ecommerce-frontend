@@ -5,9 +5,14 @@ import Link from '@mui/material/Link';
 import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography';
 import { useParams } from "react-router";
+import { useSelector, useDispatch } from 'react-redux'
+import { addItem } from '../reducer/mainReducer'
 
 
 const ProductDetailPage = () => {
+
+    const cart = useSelector((state) => state.main.cart);
+    const dispatch = useDispatch();
 
     const [pdpImages, setPdpImages] = useState([])
 
@@ -158,7 +163,8 @@ const ProductDetailPage = () => {
                                                 width: '256px',
                                                 fontSize: '18px',
                                                 fontWeight: '700'
-                                            }}>
+                                            }}
+                                            onClick={() => { dispatch(addItem(productDetail)) }}>
                                             Add to Cart
                                         </Button>
                                     </div>

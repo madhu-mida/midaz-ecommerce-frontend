@@ -7,13 +7,17 @@ import { IconContext } from "react-icons";
 import { Input } from "@mui/material";
 import { Nav, Navbar, Container } from "react-bootstrap";
 import logo from '../../logo.png';
+import { useSelector, useDispatch } from 'react-redux'
 const ariaLabel = { 'aria-label': 'description' };
 
 
 const Header = () => {
     const { loginWithRedirect } = useAuth0();
     const { user, isAuthenticated, isLoading } = useAuth0();
+    const cart = useSelector((state) => state.main.cart);
     let navigate = useNavigate();
+
+    //console.log("Cart Size :: ", cart.length);
 
     function checkAuthentication() {
         console.log("Clicked")
@@ -48,7 +52,7 @@ const Header = () => {
 
                 </div>
                 <div className="header-name">
-                    <span><img id="header-logo" src={logo} /></span>
+                    <span><img id="header-logo" src={logo} onClick={() => { navigate("/", { replace: true }) }} /></span>
                 </div>
                 <div className="header-account-cart">
                     <div id="header-account">
@@ -68,7 +72,7 @@ const Header = () => {
                             </div>
                         </IconContext.Provider>
 
-                        <span style={{ marginLeft: '10px' }}>CART</span>
+                        <span style={{ marginLeft: '10px' }}>CART ({cart.length})</span>
                     </div>
                 </div>
             </div>
