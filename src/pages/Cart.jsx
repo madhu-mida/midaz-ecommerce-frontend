@@ -1,5 +1,9 @@
 import { Col, Row, Button } from "react-bootstrap";
+import { useSelector, useDispatch } from 'react-redux'
+import { removeItem, increment, decrement } from "../reducer/mainReducer";
 const Cart = () => {
+    const cart = useSelector((state) => state.main.cart);
+    const dispatch = useDispatch();
     return (
         <div id="cart">
             <div className="cart-header" style={{ marginTop: '10px' }}>
@@ -35,9 +39,9 @@ const Cart = () => {
                                             <Col>
                                                 <div className="cart-prod-details-quantity">
 
-                                                    <div className="cart-prod-details-quantity-inc">+</div>
+                                                    <div className="cart-prod-details-quantity-inc" onClick={() => { dispatch(increment()) }}>+</div>
                                                     <div>3</div>
-                                                    <div className="cart-prod-details-quantity-dec">-</div>
+                                                    <div className="cart-prod-details-quantity-dec" onClick={() => { dispatch(decrement()) }}>-</div>
 
                                                 </div>
                                             </Col>
@@ -45,7 +49,7 @@ const Cart = () => {
                                         <Row>
                                             <Col>
                                                 <div className="cart-prod-details-remove">
-                                                    <p style={{ fontSize: '16px', marginTop: '5px' }}>Remove</p>
+                                                    <p style={{ fontSize: '16px', marginTop: '5px' }} onClick={() => { dispatch(removeItem()) }}>Remove</p>
                                                 </div>
                                             </Col>
                                         </Row>

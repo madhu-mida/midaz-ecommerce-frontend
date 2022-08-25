@@ -7,6 +7,7 @@ import { IconContext } from "react-icons";
 import { useEffect, useState } from "react";
 import SweetPagination from "sweetpagination";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router";
 
 
 const ProductListingPage = ({ catId }) => {
@@ -16,10 +17,19 @@ const ProductListingPage = ({ catId }) => {
 
     const URL = "http://localhost:4000/products/";
 
-
+    const { search } = useParams();
+    console.log('Search in PLP: ', search)
 
     const getProducts = async () => {
-        const data = await fetch(URL + `${catId}`).then(res => res.json());
+        let data = []
+        if (search) {
+            data = await fetch(URL + `search?searchTerm=${search}`).then(res => res.json());
+            console.log("Search Data: ", data)
+        }
+        else if (catId) {
+            data = await fetch(URL + `${catId}`).then(res => res.json());
+        }
+
         setProducts(data);
         setCurrentPageData(data.slice(0, 11));
         console.log(data)

@@ -22,6 +22,8 @@ const ProductDetailPage = () => {
 
     const [bigImage, setBigImage] = useState("")
 
+    const [reformedProduct, setReformedProduct] = useState("")
+
     const { id } = useParams();
 
     console.log(id)
@@ -55,8 +57,17 @@ const ProductDetailPage = () => {
         const pdpDetailsArray = JSON.parse(data[0].details)
         setPdpDetails(pdpDetailsArray)
         setProductDetail(data[0])
+        const reformedProd = {
+            "name": productDetail.name,
+            "price": productDetail.price,
+            "img": pdpImgArray[0],
+            "productId": productDetail.productId,
+            "id": productDetail._id,
+        }
+        setReformedProduct(reformedProd)
 
     }
+
 
     useEffect(() => {
         getProductDetail()
@@ -164,7 +175,7 @@ const ProductDetailPage = () => {
                                                 fontSize: '18px',
                                                 fontWeight: '700'
                                             }}
-                                            onClick={() => { dispatch(addItem(productDetail)) }}>
+                                            onClick={() => { dispatch(addItem(reformedProduct)) }}>
                                             Add to Cart
                                         </Button>
                                     </div>

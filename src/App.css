@@ -458,3 +458,8 @@ body {
   display: flex;
   align-items: center;
 }
+
+.account-first-name, .account-last-name {
+  width: 250px;
+}
+
