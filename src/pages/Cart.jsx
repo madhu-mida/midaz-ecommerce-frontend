@@ -3,10 +3,12 @@ import { Input } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Col, Row, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { removeItem, increment, decrement } from "../reducer/mainReducer";
 const Cart = () => {
     const { user, isAuthenticated } = useAuth0();
+    const { loginWithRedirect } = useAuth0();
+    let navigate = useNavigate();
 
     const cart = useSelector((state) => state.main.cart);
     const dispatch = useDispatch();
@@ -46,6 +48,17 @@ const Cart = () => {
         setSubTotal(sum)
         console.log("SubTotal", subTotal)
     }
+
+    function checkAuthentication() {
+        console.log("Clicked")
+        if (isAuthenticated) {
+            console.log("You are authenticated")
+            navigate("/checkout", { replace: true });
+        } else {
+            loginWithRedirect();
+        }
+    }
+
 
     useEffect(() => {
         updateCart()
@@ -133,7 +146,8 @@ const Cart = () => {
                                             </Col>
                                             <Col>
                                                 <div className="cart-prod-price">
-                                                    <p>${element.price}</p>
+                                                    <p>${element.price * element.quantity}</p>
+                                                    <p style={{ fontSize: '12px', fontWeight: '400' }}>${element.price} each</p>
                                                 </div>
                                             </Col>
                                         </Row>
@@ -156,7 +170,11 @@ const Cart = () => {
                                     </div>
                                 </div>
                                 <div className="cart-checkout-box-checkout">
+
                                     <Button
+                                        onClick={() => {
+                                            checkAuthentication()
+                                        }}
                                         style={{
                                             backgroundColor: '#fc5884',
                                             border: 'none',
@@ -165,11 +183,11 @@ const Cart = () => {
                                             fontSize: '18px',
                                             fontWeight: '700'
                                         }}>
-                                        <Link to="/checkout" style={{ color: 'white', textDecoration: 'none' }}>
-                                            Check out
-                                        </Link>
 
+                                        Check out
                                     </Button>
+
+
                                     <Button
                                         style={{
                                             backgroundColor: 'white',

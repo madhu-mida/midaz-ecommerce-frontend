@@ -2,9 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const URL = "http://localhost:4000/user/update"
 
+const ORDER_URL = "http://localhost:4000/user/order"
+
 const initialState = {
     cart: [],
-    user: {}
+    user: {},
+    order: {},
 }
 
 export const mainReducer = createSlice({
@@ -79,9 +82,22 @@ export const mainReducer = createSlice({
             state.user = {}
             state.cart = []
         },
+        setOrder: (state, action) => {
+            state.order = action.payload
+            fetch(ORDER_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "Application/json"
+                },
+                body: JSON.stringify(action.payload),
+            }).then(res => res.json())
+        },
+        clearCart: (state, action) => {
+            state.cart = []
+        },
     }
 })
 
-export const { addItem, removeItem, increment, decrement, setUser, updateUser, removeUser, setCart } = mainReducer.actions
+export const { addItem, removeItem, increment, decrement, setUser, updateUser, removeUser, setCart, setOrder, clearCart } = mainReducer.actions
 
 export default mainReducer.reducer

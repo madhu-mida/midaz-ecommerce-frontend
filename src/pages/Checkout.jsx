@@ -1,3 +1,4 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { Col, Row, Button } from "react-bootstrap";
 import { Breadcrumbs } from "@mui/material";
 import { Link, Typography } from "@mui/material";
@@ -7,10 +8,19 @@ import { RiCheckboxBlankCircleLine, RiCheckboxBlankCircleFill } from "react-icon
 import { IconContext } from "react-icons";
 import { FormControl, FormControlLabel, RadioGroup, FormLabel, Radio } from "@mui/material"
 import { useSelector, useDispatch } from 'react-redux'
+import { calculateSubTotal } from "../util"
+import { clearCart, setCart, setOrder, setUser, updateUser } from "../reducer/mainReducer";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-    const cart = useSelector((state) => state.main.cart);
+    const { user, isAuthenticated } = useAuth0();
 
+    const stateCart = useSelector((state) => state.main.cart);
+
+    const stateUser = useSelector((state) => state.main.user)
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const regions = [
         {
             value: 'United States',
@@ -258,7 +268,7 @@ const Checkout = () => {
     ];
     const [region, setRegion] = useState("US")
 
-    const [state, setState] = useState("AL")
+    const [state, setState] = useState(stateUser?.state ? stateUser.state : "AL")
 
     const handleChangeRegion = (event) => {
         setRegion(event.target.value);
@@ -272,6 +282,92 @@ const Checkout = () => {
 
     const [checkoutStep, setCheckoutStep] = useState(0)
 
+    let subTotal = calculateSubTotal(stateCart);
+
+    let tax = (subTotal * 0.07);
+    let total = (subTotal * 0.07) + subTotal
+
+    const [firstName, setFirstName] = useState(stateUser?.firstName ? stateUser.firstName : "")
+    const [lastName, setLastName] = useState(stateUser?.lastName ? stateUser.lastName : "")
+    const [addressLine1, setAddressLine1] = useState(stateUser?.addressLine1 ? stateUser.addressLine1 : "")
+    const [addressLine2, setAddressLine2] = useState(stateUser?.addressLine2 ? stateUser.addressLine2 : "")
+    const [city, setCity] = useState(stateUser?.city ? stateUser.city : "");
+    const [zipCode, setZipcode] = useState(stateUser?.zipCode ? stateUser.zipCode : "");
+    const [phone, setPhone] = useState(stateUser?.phone ? stateUser.phone : "");
+
+
+    const [paymentName, setPaymentName] = useState("");
+    const [paymentCard, setPaymentCard] = useState("");
+    const [paymentExpirationDate, setPaymentExpirationDate] = useState("");
+
+
+    const [billingFirstName, setBillingFirstName] = useState("")
+    const [billingLastName, setBillingLastName] = useState("")
+    const [billingAddressLine1, setBillingAddressLine1] = useState("")
+    const [billingAddressLine2, setBillingAddressLine2] = useState("")
+    const [billingCity, setBillingCity] = useState("");
+    const [billingState, setBillingState] = useState("");
+    const [billingZipCode, setBillingZipcode] = useState("");
+    const [billingPhone, setBillingPhone] = useState("");
+
+    const updateCart = async () => {
+        const cartData = {
+            "products": [],
+            "user": stateUser?._id
+        }
+        console.log("cartData", cartData)
+        let updatedCart = await fetch(URL, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "Application/json"
+            },
+            body: JSON.stringify(cartData),
+        }).then(res => res.json())
+        console.log("updatedCart", updatedCart)
+    }
+
+
+    function handleUpdate() {
+        if (stateUser) {
+            console.log("stateUser", stateUser)
+            let stateUserData = JSON.parse(JSON.stringify(stateUser));
+            console.log("Address Line 1", addressLine1)
+            stateUserData.addressLine1 = addressLine1;
+            stateUserData.addressLine2 = addressLine2;
+            stateUserData.city = city;
+            stateUserData.state = state;
+            stateUserData.zipCode = zipCode;
+            stateUserData.phone = phone;
+            console.log("stateUserData", stateUserData)
+            dispatch(updateUser(stateUserData))
+        }
+    }
+
+    function handleOrder() {
+        const orderDetails = {
+            "orderId": new Date().getTime(),
+            "emailId": stateUser.email,
+            "products": stateCart,
+            "orderDate": new Date(),
+            "orderTotal": total.toFixed(2),
+            "orderTax": tax.toFixed(2),
+            "orderSubTotal": subTotal,
+            "shippigAddress": {
+                "addressLine1": addressLine1,
+                "addressLine2": addressLine2,
+                "city": city,
+                "state": state,
+                "zipCode": zipCode,
+            },
+            "user": stateUser._id,
+        }
+        console.log(orderDetails)
+        dispatch(setOrder(orderDetails))
+        dispatch(clearCart())
+        updateCart()
+        navigate("/confirmation")
+
+    }
 
 
     const handleChange = (event) => {
@@ -309,7 +405,7 @@ const Checkout = () => {
                     <div className="checkout-contact-info">
                         <div className="checkout-info">
                             <span>Contact Information</span>
-                            <span>Already have an account? Log in</span>
+                            {/* <span>Already have an account? Log in</span> */}
                         </div>
                         <div className="checkout-email">
                             <TextField
@@ -318,6 +414,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox"
                                 label="Email"
                                 placeholder="Email"
+                                value={stateUser.email}
+                                disabled={true}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -355,6 +453,8 @@ const Checkout = () => {
                                     className="checkout-email-textbox"
                                     label="First Name"
                                     placeholder="First Name"
+                                    value={firstName}
+                                    onChange={(event) => setFirstName(event.target.value)}
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -365,6 +465,8 @@ const Checkout = () => {
                                     className="checkout-email-textbox"
                                     label="Last Name"
                                     placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={(event) => setLastName(event.target.value)}
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -377,6 +479,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox"
                                 label="Address"
                                 placeholder="Address"
+                                onChange={(event) => setAddressLine1(event.target.value)}
+                                value={addressLine1}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -388,6 +492,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox"
                                 label="Apartment, suite, etc."
                                 placeholder="Apartment"
+                                onChange={(event) => setAddressLine2(event.target.value)}
+                                value={addressLine2}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -399,6 +505,8 @@ const Checkout = () => {
                                 className="checkout-adrs-csz"
                                 label="City"
                                 placeholder="City"
+                                onChange={(event) => setCity(event.target.value)}
+                                value={city}
                             // defaultValue="Hello World"
                             />
                             <TextField
@@ -426,6 +534,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox checkout-adrs-csz"
                                 label="ZIP code"
                                 placeholder="ZIP code"
+                                onChange={(event) => setZipcode(event.target.value)}
+                                value={zipCode}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -437,6 +547,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox"
                                 label="Phone"
                                 placeholder="Phone"
+                                onChange={(event) => setPhone(event.target.value)}
+                                value={phone}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -445,7 +557,13 @@ const Checkout = () => {
                                 <a style={{ color: 'black' }} href="/cart">Return to cart</a>
                             </div>
                             <div >
-                                <Button onClick={() => { setCheckoutStep(1) }} style={{ backgroundColor: 'black', color: 'white' }}>Continue to Shipping</Button>
+                                <Button
+                                    onClick={() => {
+                                        handleUpdate()
+                                        setCheckoutStep(1)
+
+                                    }}
+                                    style={{ backgroundColor: 'black', color: 'white' }}>Continue to Shipping</Button>
                             </div>
                         </div>
 
@@ -454,14 +572,14 @@ const Checkout = () => {
                         <div className="shipping-contact-info" style={{ border: '1px solid #f2f2f2', padding: '20px' }}>
                             <Row style={{ borderBottom: '1px solid #f2f2f2', textAlign: 'left', marginBottom: '10px' }}>
                                 <Col style={{ color: '#737373' }}>Contact</Col>
-                                <Col>test@gmail.com</Col>
-                                <Col style={{ textAlign: 'right' }}>
+                                <Col>{stateUser.email}</Col>
+                                {/* <Col style={{ textAlign: 'right' }}>
                                     <a href="">change</a>
-                                </Col>
+                                </Col> */}
                             </Row>
                             <Row style={{ textAlign: 'left' }}>
                                 <Col style={{ color: '#737373' }}>Ship To</Col>
-                                <Col>555 Laurie Ln, Apt B9, Thousand Oaks, California - 91360</Col>
+                                <Col>{stateUser?.addressLine1}, {stateUser?.addressLine2}, {stateUser?.city}, {stateUser?.state} - {stateUser?.zipCode}</Col>
                                 <Col style={{ textAlign: 'right' }}>
                                     <a href="">change</a>
                                 </Col>
@@ -514,6 +632,8 @@ const Checkout = () => {
                                 className="checkout-email-textbox"
                                 label="Card Number"
                                 placeholder="Card Number"
+                                onChange={(event) => setPaymentCard(event.target.value)}
+                                value={paymentCard}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -525,6 +645,8 @@ const Checkout = () => {
                                     className="checkout-email-textbox"
                                     label="Expiry Date"
                                     placeholder="MM/YY"
+                                    onChange={(event) => setPaymentExpirationDate(event.target.value)}
+                                    value={paymentExpirationDate}
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -535,6 +657,8 @@ const Checkout = () => {
                                     className="checkout-email-textbox"
                                     label="Security Code"
                                     placeholder="CVV"
+                                    onChange={(event) => (event.target.value)}
+
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -591,6 +715,9 @@ const Checkout = () => {
                                                 className="checkout-email-textbox"
                                                 label="First Name"
                                                 placeholder="First Name"
+                                                onChange={(event) => setBillingFirstName(event.target.value)}
+                                                value={billingFirstName}
+
                                             // defaultValue="Hello World"
                                             />
                                         </div>
@@ -601,6 +728,8 @@ const Checkout = () => {
                                                 className="checkout-email-textbox"
                                                 label="Last Name"
                                                 placeholder="Last Name"
+                                                onChange={(event) => setBillingLastName(event.target.value)}
+                                                value={billingLastName}
                                             // defaultValue="Hello World"
                                             />
                                         </div>
@@ -613,6 +742,9 @@ const Checkout = () => {
                                             className="checkout-email-textbox"
                                             label="Address"
                                             placeholder="Address"
+                                            onChange={(event) => setBillingAddressLine1(event.target.value)}
+                                            value={billingAddressLine1}
+
                                         // defaultValue="Hello World"
                                         />
                                     </div>
@@ -624,6 +756,9 @@ const Checkout = () => {
                                             className="checkout-email-textbox"
                                             label="Apartment, suite, etc."
                                             placeholder="Apartment"
+                                            onChange={(event) => setBillingAddressLine2(event.target.value)}
+                                            value={billingAddressLine2}
+
                                         // defaultValue="Hello World"
                                         />
                                     </div>
@@ -635,6 +770,9 @@ const Checkout = () => {
                                             className="checkout-adrs-csz"
                                             label="City"
                                             placeholder="City"
+                                            onChange={(event) => setBillingCity(event.target.value)}
+                                            value={billingCity}
+
                                         // defaultValue="Hello World"
                                         />
                                         <TextField
@@ -642,8 +780,8 @@ const Checkout = () => {
                                             className="checkout-country checkout-adrs-csz"
                                             select
                                             label="State"
-                                            value={state}
-                                            onChange={handleChangeState}
+                                            onChange={(event) => setBillingState(event.target.value)}
+                                            value={billingState}
                                             SelectProps={{
                                                 native: true,
                                             }}
@@ -662,6 +800,9 @@ const Checkout = () => {
                                             className="checkout-email-textbox checkout-adrs-csz"
                                             label="ZIP code"
                                             placeholder="ZIP code"
+                                            onChange={(event) => setBillingZipcode(event.target.value)}
+                                            value={billingZipCode}
+
                                         // defaultValue="Hello World"
                                         />
                                     </div>
@@ -673,6 +814,9 @@ const Checkout = () => {
                                             className="checkout-email-textbox"
                                             label="Phone"
                                             placeholder="Phone"
+                                            onChange={(event) => setBillingPhone(event.target.value)}
+                                            value={billingPhone}
+
                                         // defaultValue="Hello World"
                                         />
                                     </div>
@@ -684,7 +828,12 @@ const Checkout = () => {
                                     <a onClick={() => { setCheckoutStep(1) }} style={{ color: 'black' }} href="#">Return to shipping</a>
                                 </div>
                                 <div >
-                                    <Button style={{ backgroundColor: 'black', color: 'white' }}>Complete Order</Button>
+                                    <Button
+                                        onClick={() => {
+                                            handleOrder()
+                                        }}
+                                        style={{ backgroundColor: 'black', color: 'white' }}>Complete Order</Button>
+
                                 </div>
                             </div>
 
@@ -702,38 +851,38 @@ const Checkout = () => {
                             <Col style={{ fontWeight: 'bold' }}>Price</Col>
                         </Row>
                         {
-                            cart.map((element) => {
+                            stateCart.map((element) => {
                                 return (
                                     <Row>
                                         <Col>
                                             <div className="checkout-product-thumbnail">
-                                                <img className="checkout-product-thumbnail-img" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06381_120x.jpg?v=1655796706" alt="" ></img>
+                                                <img className="checkout-product-thumbnail-img" src={element.img} alt="" ></img>
                                             </div>
                                         </Col>
                                         <Col>
                                             <Row>
                                                 <Col>
                                                     <div className="checkout-product-name">
-                                                        <span>Product</span>
+                                                        <span>{element.name}</span>
                                                     </div>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col>
                                                     <div className="checkout-product-size">
-                                                        <p>S</p>
+                                                        <p>{element.size}</p>
                                                     </div>
                                                 </Col>
                                             </Row>
                                         </Col>
                                         <Col>
                                             <div className="checkout-product-quantity">
-                                                <span>1</span>
+                                                <span>{element.quantity}</span>
                                             </div>
                                         </Col>
                                         <Col>
                                             <div className="checkout-product-price">
-                                                <span>$24</span>
+                                                <span>${element.price}</span>
                                             </div>
                                         </Col>
                                     </Row>
@@ -748,7 +897,7 @@ const Checkout = () => {
                                 <p>Subtotal</p>
                             </Col>
                             <Col>
-                                <p style={{ fontWeight: 'bold' }}>$56</p>
+                                <p style={{ fontWeight: 'bold' }}>${calculateSubTotal(stateCart)}</p>
                             </Col>
                         </Row>
                         <Row>
@@ -756,8 +905,17 @@ const Checkout = () => {
                                 <p>Shipping</p>
                             </Col>
                             <Col>
-                                <p>Calculated at next step</p>
+                                <p>Free</p>
                             </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <p>Tax(7%)</p>
+                            </Col>
+                            <Col>
+                                <p>${tax.toFixed(2)}</p>
+                            </Col>
+
                         </Row>
                     </div>
                     <div className="checkout-total">
@@ -766,7 +924,7 @@ const Checkout = () => {
                                 <p>Total</p>
                             </Col>
                             <Col>
-                                <p style={{ fontWeight: 'bold', fontSize: '20px' }}>$56</p>
+                                <p style={{ fontWeight: 'bold', fontSize: '20px' }}>${total.toFixed(2)}</p>
                             </Col>
                         </Row>
                     </div>

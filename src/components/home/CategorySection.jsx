@@ -47,7 +47,7 @@ const CategorySection = () => {
                 </div>
                 <div className="categrory-dresses">
                     <div className="category-each">
-                        <Link to="//products/dresses" >
+                        <Link to="/products/dresses" >
                             <img className="category-img" src={dress} />
                         </Link>
 

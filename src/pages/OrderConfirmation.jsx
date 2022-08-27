@@ -3,8 +3,13 @@ import { RiShoppingBag3Fill, RiShoppingBag3Line } from "react-icons/ri"
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { FiPackage } from "react-icons/fi";
 import { IconContext } from "react-icons";
+import { useSelector, useDispatch } from 'react-redux'
 
 const OrderConfirmation = () => {
+    const stateOrder = useSelector((state) => state.main.order);
+    const stateUser = useSelector((state) => state.main.user)
+    const dispatch = useDispatch();
+
     return (
         <div id="order-summary-page" style={{ background: '#f2f2f2' }}>
             <div id='order-summary' style={{ background: 'white' }}>
@@ -12,7 +17,7 @@ const OrderConfirmation = () => {
                     <h3>Thanks for shopping!</h3>
                 </div>
                 <div>
-                    <p>Hi Madhu, we have received your order and are getting it ready to be shipped.</p>
+                    <p>Hi {stateUser.firstName}, we have received your order and are getting it ready to be shipped.</p>
                     <p>We will notify you when it's on its way!</p>
                 </div>
                 <div className="order-icons">
@@ -55,84 +60,58 @@ const OrderConfirmation = () => {
                 </div>
                 <div className="order-summary-no-date" style={{ fontWeight: 'bold', marginTop: '14px' }}>
                     <div>
-                        <span>Order No: &nbsp; 12345</span>
+                        <span>Order No: &nbsp; {stateOrder.orderId}</span>
                     </div>
                     <div>
                         <span>Order Date: &nbsp; Aug.1,2022</span>
                     </div>
                 </div>
                 <div className="order-items" style={{ textAlign: 'left' }}>
-                    <Row style={{ borderBottom: '1px solid #f2f2f2', marginTop: '10px' }}>
-                        <Col>
-                            <div className="cart-prod-img">
-                                <img className="checkout-product-thumbnail-img" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06381_120x.jpg?v=1655796706" alt="" ></img>
-                            </div>
-                        </Col>
-                        <Col>
-                            <div className="cart-prod-details">
-                                <Row>
+                    {
+                        stateOrder.products.map((element) => {
+                            return (
+                                <Row style={{ borderBottom: '1px solid #f2f2f2', marginTop: '10px' }}>
                                     <Col>
-                                        <div className="cart-prod-details-name">
-                                            <p style={{ fontSize: '17px' }}>Product Name</p>
+                                        <div className="cart-prod-img">
+                                            <img className="checkout-product-thumbnail-img" src={element.img} alt="" ></img>
                                         </div>
                                     </Col>
-                                </Row>
-                                <Row>
                                     <Col>
-                                        <div className="cart-prod-details-size">
-                                            <p style={{ fontSize: '14px' }}>Size: XS</p>
+                                        <div className="cart-prod-details">
+                                            <Row>
+                                                <Col>
+                                                    <div className="cart-prod-details-name">
+                                                        <p style={{ fontSize: '17px' }}>{element.name}</p>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <div className="cart-prod-details-size">
+                                                        <p style={{ fontSize: '14px' }}>Size: {element.size}</p>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+
                                         </div>
+
                                     </Col>
-                                </Row>
-
-                            </div>
-
-                        </Col>
-                        <Col>
-                            <div>3</div>
-                        </Col>
-                        <Col>
-                            <div className="cart-prod-price">
-                                <p>$20</p>
-                            </div>
-                        </Col>
-                    </Row>
-
-                    <Row style={{ borderBottom: '1px solid #f2f2f2', marginTop: '10px' }}>
-                        <Col>
-                            <div className="cart-prod-img">
-                                <img className="checkout-product-thumbnail-img" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06381_120x.jpg?v=1655796706" alt="" ></img>
-                            </div>
-                        </Col>
-                        <Col>
-                            <div className="cart-prod-details">
-                                <Row>
                                     <Col>
-                                        <div className="cart-prod-details-name">
-                                            <p style={{ fontSize: '17px' }}>Product Name</p>
-                                        </div>
+                                        <div>{element.quantity}</div>
                                     </Col>
-                                </Row>
-                                <Row>
                                     <Col>
-                                        <div className="cart-prod-details-size">
-                                            <p style={{ fontSize: '14px' }}>Size: XS</p>
+                                        <div className="cart-prod-price">
+                                            <p>${element.price * element.quantity}</p>
+                                            <p style={{ fontSize: '12px', fontWeight: '400' }}>${element.price} each</p>
                                         </div>
                                     </Col>
                                 </Row>
 
-                            </div>
+                            )
+                        })
+                    }
 
-                        </Col>
-                        <Col>
-                            <div>3</div>
-                        </Col>
-                        <Col>
-                            <div className="cart-prod-price">
-                                <p>$20</p>
-                            </div>
-                        </Col>
-                    </Row>
+
                 </div>
 
                 <div className="order-confirm-shipping-total">
@@ -154,7 +133,7 @@ const OrderConfirmation = () => {
                                             <p>Delivered To</p>
                                         </Col>
                                         <Col>
-                                            <p>Madhumida Sanjeev</p>
+                                            <p>{stateUser.firstName} {stateUser.lastName}</p>
                                         </Col>
                                     </Row>
                                     <Row>
@@ -162,7 +141,7 @@ const OrderConfirmation = () => {
                                             <p>Delivery Address</p>
                                         </Col>
                                         <Col>
-                                            <p>555 Laurie Ln, Apt B9, Thousand Oaks, CA - 91360</p>
+                                            <p>{stateOrder.shippigAddress.addressLine1}, {stateOrder.shippigAddress.addressLine2}, {stateOrder.shippigAddress.city}, {stateOrder.shippigAddress.state} - {stateOrder.shippigAddress.zipCode}</p>
                                         </Col>
                                     </Row>
                                 </div>
@@ -176,7 +155,7 @@ const OrderConfirmation = () => {
                                         <p>Subtotal</p>
                                     </Col>
                                     <Col>
-                                        <p>$100</p>
+                                        <p>${stateOrder.orderSubTotal}</p>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -184,7 +163,15 @@ const OrderConfirmation = () => {
                                         <p>Shipping fee</p>
                                     </Col>
                                     <Col>
-                                        <p>$0</p>
+                                        <p>Free</p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col style={{ fontWeight: 'bold' }}>
+                                        <p>Tax(7%)</p>
+                                    </Col>
+                                    <Col>
+                                        <p>${stateOrder.orderTax}</p>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -192,7 +179,7 @@ const OrderConfirmation = () => {
                                         <p>Total</p>
                                     </Col>
                                     <Col>
-                                        <p>$100</p>
+                                        <p>${stateOrder.orderTotal}</p>
                                     </Col>
                                 </Row>
                             </div>
