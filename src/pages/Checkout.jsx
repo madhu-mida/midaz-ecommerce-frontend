@@ -6,8 +6,11 @@ import { useState } from "react";
 import { RiCheckboxBlankCircleLine, RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { IconContext } from "react-icons";
 import { FormControl, FormControlLabel, RadioGroup, FormLabel, Radio } from "@mui/material"
+import { useSelector, useDispatch } from 'react-redux'
 
 const Checkout = () => {
+    const cart = useSelector((state) => state.main.cart);
+
     const regions = [
         {
             value: 'United States',
@@ -698,39 +701,46 @@ const Checkout = () => {
                             <Col style={{ fontWeight: 'bold' }}>Qty</Col>
                             <Col style={{ fontWeight: 'bold' }}>Price</Col>
                         </Row>
-                        <Row>
-                            <Col>
-                                <div className="checkout-product-thumbnail">
-                                    <img className="checkout-product-thumbnail-img" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06381_120x.jpg?v=1655796706" alt="" ></img>
-                                </div>
-                            </Col>
-                            <Col>
-                                <Row>
-                                    <Col>
-                                        <div className="checkout-product-name">
-                                            <span>Product</span>
-                                        </div>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <div className="checkout-product-size">
-                                            <p>S</p>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Col>
-                            <Col>
-                                <div className="checkout-product-quantity">
-                                    <span>1</span>
-                                </div>
-                            </Col>
-                            <Col>
-                                <div className="checkout-product-price">
-                                    <span>$24</span>
-                                </div>
-                            </Col>
-                        </Row>
+                        {
+                            cart.map((element) => {
+                                return (
+                                    <Row>
+                                        <Col>
+                                            <div className="checkout-product-thumbnail">
+                                                <img className="checkout-product-thumbnail-img" src="https://cdn.shopify.com/s/files/1/2505/6452/products/DSC06381_120x.jpg?v=1655796706" alt="" ></img>
+                                            </div>
+                                        </Col>
+                                        <Col>
+                                            <Row>
+                                                <Col>
+                                                    <div className="checkout-product-name">
+                                                        <span>Product</span>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <div className="checkout-product-size">
+                                                        <p>S</p>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                        <Col>
+                                            <div className="checkout-product-quantity">
+                                                <span>1</span>
+                                            </div>
+                                        </Col>
+                                        <Col>
+                                            <div className="checkout-product-price">
+                                                <span>$24</span>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                );
+                            })
+                        }
+
                     </div>
                     <div className="checkout-subtotal">
                         <Row>

@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const URL = "http://localhost:4000/user/update"
+
 const initialState = {
-    cart: []
+    cart: [],
+    user: {}
 }
 
 export const mainReducer = createSlice({
@@ -10,7 +13,7 @@ export const mainReducer = createSlice({
     reducers: {
         addItem: (state, action) => {
             const existingItem = state.cart.find((element) => {
-                if (element.productId === action.payload.productId) {
+                if (element.productId === action.payload.productId && element.size === action.payload.size) {
                     return true
                 }
             })
@@ -54,9 +57,31 @@ export const mainReducer = createSlice({
                 existingItem.quantity -= 1
             }
         },
+        setCart: (state, action) => {
+            state.cart = action.payload;
+        },
+        setUser: (state, action) => {
+            state.user = action.payload
+            console.log("action.payload", action.payload);
+        },
+        updateUser: (state, action) => {
+            state.user = action.payload
+            fetch(URL, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "Application/json"
+                },
+                body: JSON.stringify(action.payload),
+            }).then(res => res.json())
+
+        },
+        removeUser: (state, action) => {
+            state.user = {}
+            state.cart = []
+        },
     }
 })
 
-export const { addItem, removeItem, increment, decrement } = mainReducer.actions
+export const { addItem, removeItem, increment, decrement, setUser, updateUser, removeUser, setCart } = mainReducer.actions
 
 export default mainReducer.reducer

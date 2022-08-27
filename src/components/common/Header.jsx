@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import * as React from 'react';
 import { Link, useNavigate } from "react-router-dom"
 import { FaInstagram, FaYoutube } from "react-icons/fa";
 import { IoSearchOutline, IoCartOutline } from "react-icons/io5";
@@ -9,7 +10,12 @@ import { Nav, Navbar, Container } from "react-bootstrap";
 import logo from '../../logo.png';
 import { useSelector, useDispatch } from 'react-redux'
 import { useState } from "react";
+
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 const ariaLabel = { 'aria-label': 'description' };
+
 
 
 const Header = () => {
@@ -37,6 +43,16 @@ const Header = () => {
             loginWithRedirect();
         }
     }
+
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <div>
@@ -89,8 +105,8 @@ const Header = () => {
                             </div>
                         </IconContext.Provider>
 
-                        <Link to="/cart">
-                            <span style={{ marginLeft: '10px' }}>CART ({cart.length})</span>
+                        <Link to="/cart" style={{ color: 'black', textDecoration: 'none' }}>
+                            <span style={{ marginLeft: '10px', color: 'black' }}>CART ({cart.length})</span>
                         </Link>
 
                     </div>
@@ -101,9 +117,176 @@ const Header = () => {
                     <Container>
 
                         <Nav className="me-auto, header-categories" >
-                            <Nav.Link style={{ color: "black" }} href="#home">SHOP BY COLLECTION</Nav.Link>
-                            <Nav.Link style={{ color: "black" }} href="#features">SHOP BY TYPE</Nav.Link>
-                            <Nav.Link style={{ color: "black" }} href="#pricing">ACCESSORIES</Nav.Link>
+                            <Nav.Link style={{ color: "black" }}>
+
+                                <div style={{ fontFamily: 'serif' }}>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={open ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                    >
+                                        <span style={{ fontSize: '16px', color: 'black', fontFamily: 'serif' }}>SHOP BY COLLECTION</span>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+
+                                    >
+                                        <MenuItem>
+                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                                Active Wear
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                                Coats & Jackets
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                                Dresses
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                                Skirts
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                                Sweaters
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                                Tops
+                                            </Link>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Nav.Link>
+                            <Nav.Link style={{ color: "black" }}>
+
+                                <div style={{ fontFamily: 'serif' }}>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={open ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                    >
+                                        <span style={{ fontSize: '16px', color: 'black', fontFamily: 'serif' }}>SHOP BY TYPE</span>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+
+                                    >
+                                        <MenuItem>
+                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                                Active Wear
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                                Coats & Jackets
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                                Dresses
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                                Skirts
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                                Sweaters
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                                Tops
+                                            </Link>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Nav.Link>
+
+                            <Nav.Link style={{ color: "black" }}>
+
+                                <div style={{ fontFamily: 'serif' }}>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={open ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                    >
+                                        <span style={{ fontSize: '16px', color: 'black', fontFamily: 'serif' }}>SHOP BY CATEGORY</span>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+
+                                    >
+                                        <MenuItem>
+                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                                Active Wear
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                                Coats & Jackets
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                                Dresses
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                                Skirts
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                                Sweaters
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                                Tops
+                                            </Link>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            </Nav.Link>
+
+
+                            {/* <Nav.Link style={{ color: "black" }} href="#features">SHOP BY TYPE</Nav.Link> */}
+                            {/* <Nav.Link style={{ color: "black" }} href="#pricing">ACCESSORIES</Nav.Link> */}
                         </Nav>
                     </Container>
                 </Navbar>

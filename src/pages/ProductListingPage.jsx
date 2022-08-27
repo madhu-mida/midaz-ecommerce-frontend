@@ -38,7 +38,7 @@ const ProductListingPage = ({ catId }) => {
 
     useEffect(() => {
         getProducts()
-    }, [])
+    }, [catId, search])
     return (
         <div className="ProductListingPage">
             <div className="productListingPage-top-sort">

@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { useParams } from "react-router";
 import { useSelector, useDispatch } from 'react-redux'
 import { addItem } from '../reducer/mainReducer'
+import { useNavigate } from "react-router-dom";
 
 
 const ProductDetailPage = () => {
@@ -48,6 +49,8 @@ const ProductDetailPage = () => {
 
     const URL = "http://localhost:4000/product/";
 
+    const navigate = useNavigate();
+
     const getProductDetail = async () => {
         const data = await fetch(URL + `${id}`).then(res => res.json())
         console.log(data)
@@ -58,14 +61,21 @@ const ProductDetailPage = () => {
         setPdpDetails(pdpDetailsArray)
         setProductDetail(data[0])
         const reformedProd = {
-            "name": productDetail.name,
-            "price": productDetail.price,
+            "name": data[0].name,
+            "price": data[0].price,
             "img": pdpImgArray[0],
-            "productId": productDetail.productId,
-            "id": productDetail._id,
+            "productId": data[0].productId,
+            "id": data[0]._id,
         }
         setReformedProduct(reformedProd)
+        console.log("Reformed Product:", reformedProduct)
 
+    }
+
+    function handleAddToCart() {
+        reformedProduct.size = selectedSize;
+        dispatch(addItem(reformedProduct))
+        navigate("/cart")
     }
 
 
@@ -175,7 +185,8 @@ const ProductDetailPage = () => {
                                                 fontSize: '18px',
                                                 fontWeight: '700'
                                             }}
-                                            onClick={() => { dispatch(addItem(reformedProduct)) }}>
+                                            disabled={!selectedSize}
+                                            onClick={() => { handleAddToCart() }}>
                                             Add to Cart
                                         </Button>
                                     </div>
