@@ -5,6 +5,7 @@ import { FiPackage } from "react-icons/fi";
 import { IconContext } from "react-icons";
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
+import { Link } from "react-router-dom";
 
 const OrderConfirmation = () => {
     const stateOrder = useSelector((state) => state.main.order);
@@ -188,6 +189,11 @@ const OrderConfirmation = () => {
                     </Row>
 
 
+                </div>
+                <div>
+                    <Link to="/" style={{ textDecorationColor: 'black' }}>
+                        <span style={{ color: 'black', textAlign: 'center' }}>Continue Shopping</span>
+                    </Link>
                 </div>
             </div>
         </div>

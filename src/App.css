@@ -1,11 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Akshar:wght@300;400&family=Bitter:wght@500&family=Comforter&family=Cormorant:wght@300&family=Crimson+Text&family=Fredoka+One&family=Lato:wght@300&family=Londrina+Shadow&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Padauk&family=Permanent+Marker&family=Questrial&family=Radio+Canada&family=Roboto+Flex:opsz,wght@8..144,200&family=Source+Serif+Pro&family=Stylish&family=Supermercado+One&family=Ubuntu&display=swap');
 
+@font-face {
+  font-family: "whitney";
+  src: local("whitney"),
+    url("./fonts/whitneymedium.otf") format("truetype");
+  font-weight: normal;
+}
+
 .App {
   text-align: center;
 }
 
 body {
-  font-family: 'Crimson Text', serif !important;
+  font-family: 'whitney', serif !important;
   letter-spacing: 0.1em;
 }
 
