@@ -3,7 +3,8 @@ import { RiShoppingBag3Fill, RiShoppingBag3Line } from "react-icons/ri"
 import { MdOutlineLocalShipping } from "react-icons/md";
 import { FiPackage } from "react-icons/fi";
 import { IconContext } from "react-icons";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
 
 const OrderConfirmation = () => {
     const stateOrder = useSelector((state) => state.main.order);
@@ -63,7 +64,7 @@ const OrderConfirmation = () => {
                         <span>Order No: &nbsp; {stateOrder.orderId}</span>
                     </div>
                     <div>
-                        <span>Order Date: &nbsp; Aug.1,2022</span>
+                        <span>Order Date: &nbsp; {moment().format('MMMM Do YYYY')}</span>
                     </div>
                 </div>
                 <div className="order-items" style={{ textAlign: 'left' }}>

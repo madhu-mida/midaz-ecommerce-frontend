@@ -15,7 +15,7 @@ const ProductListingPage = ({ catId }) => {
     const [products, setProducts] = useState(null);
     const [currentPageData, setCurrentPageData] = useState(null);
 
-    const URL = "http://localhost:4000/products/";
+    const URL = " https://ecom-midaz-ms-95.herokuapp.com/products/";
 
     const { search } = useParams();
     console.log('Search in PLP: ', search)

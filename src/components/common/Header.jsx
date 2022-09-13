@@ -75,7 +75,7 @@ const Header = () => {
                         onChange={handleChange}
                         value={searchTerm}
                         inputProps={ariaLabel} />
-                    <IconContext.Provider value={{ size: "1.5em", className: "global-class-name" }}>
+                    <IconContext.Provider value={{ size: "1.5em", className: "global-class-name", color: "#6c757d" }}>
                         <div>
                             <Link to={`/products/${searchTerm}`} >
                                 <IoSearchOutline />
@@ -94,7 +94,7 @@ const Header = () => {
                                 <RiAccountBoxLine />
                             </div>
                         </IconContext.Provider>
-                        <span onClick={() => { checkAuthentication() }} style={{ marginLeft: '10px' }}>ACCOUNT</span>
+                        <span onClick={() => { checkAuthentication() }} style={{ marginLeft: '10px', cursor: "pointer" }}>ACCOUNT</span>
                         {/* <button onClick={() => loginWithRedirect()}>Log In</button> */}
 
                     </div>

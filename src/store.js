@@ -1,8 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import mainReducer from "./reducer/mainReducer";
+import { loadState, saveState } from './localStorage';
 
-export const store = configureStore({
+const persistedState = loadState();
+const store = configureStore({
     reducer: {
         main: mainReducer,
     },
-})
+    preloadedState: persistedState
+});
+
+store.subscribe(
+    () => {
+        saveState(store.getState());
+    }
+);
+
+export default store;

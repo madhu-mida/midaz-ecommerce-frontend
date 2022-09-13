@@ -5,6 +5,9 @@ import { Col, Row, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from "react-router-dom";
 import { removeItem, increment, decrement } from "../reducer/mainReducer";
+import { CgSmileSad } from "react-icons/cg";
+import { IconContext } from "react-icons";
+
 const Cart = () => {
     const { user, isAuthenticated } = useAuth0();
     const { loginWithRedirect } = useAuth0();
@@ -15,7 +18,7 @@ const Cart = () => {
 
     const stateUser = useSelector((state) => state.main.user)
 
-    const URL = "http://localhost:4000/cart";
+    const URL = " https://ecom-midaz-ms-95.herokuapp.com/cart";
 
     const updateCart = async () => {
         console.log("Update Cart is Called")
@@ -73,7 +76,7 @@ const Cart = () => {
             <div className="cart-items">
                 <Row>
                     <Col lg={7}>
-                        <div className="cart-products">
+                        {cart && cart.length > 0 ? <div className="cart-products">
                             {
                                 cart.map((element) => {
                                     return (
@@ -156,6 +159,12 @@ const Cart = () => {
                             }
 
                         </div>
+                            : <IconContext.Provider value={{ size: "1.2em", className: "global-class-name" }}>
+                                <div>
+                                    <span style={{ fontSize: '20px' }}>Your cart is empty &nbsp;</span><CgSmileSad />
+                                </div>
+                            </IconContext.Provider>
+                        }
 
                     </Col>
                     <Col>
@@ -172,6 +181,7 @@ const Cart = () => {
                                 <div className="cart-checkout-box-checkout">
 
                                     <Button
+                                        disabled={!cart.length}
                                         onClick={() => {
                                             checkAuthentication()
                                         }}

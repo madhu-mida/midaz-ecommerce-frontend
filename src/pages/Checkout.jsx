@@ -3,7 +3,7 @@ import { Col, Row, Button } from "react-bootstrap";
 import { Breadcrumbs } from "@mui/material";
 import { Link, Typography } from "@mui/material";
 import TextField from '@mui/material/TextField';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiCheckboxBlankCircleLine, RiCheckboxBlankCircleFill } from "react-icons/ri";
 import { IconContext } from "react-icons";
 import { FormControl, FormControlLabel, RadioGroup, FormLabel, Radio } from "@mui/material"
@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { calculateSubTotal } from "../util"
 import { clearCart, setCart, setOrder, setUser, updateUser } from "../reducer/mainReducer";
 import { useNavigate } from "react-router-dom";
+import moment from 'moment';
 
 const Checkout = () => {
     const { user, isAuthenticated } = useAuth0();
@@ -266,6 +267,7 @@ const Checkout = () => {
             label: "WY"
         }
     ];
+
     const [region, setRegion] = useState("US")
 
     const [state, setState] = useState(stateUser?.state ? stateUser.state : "AL")
@@ -276,6 +278,7 @@ const Checkout = () => {
 
     const handleChangeState = (event) => {
         setState(event.target.value);
+        validateState(event.target.value)
     };
 
     const [value, setValue] = useState('same');
@@ -287,18 +290,14 @@ const Checkout = () => {
     let tax = (subTotal * 0.07);
     let total = (subTotal * 0.07) + subTotal
 
-    const [firstName, setFirstName] = useState(stateUser?.firstName ? stateUser.firstName : "")
-    const [lastName, setLastName] = useState(stateUser?.lastName ? stateUser.lastName : "")
-    const [addressLine1, setAddressLine1] = useState(stateUser?.addressLine1 ? stateUser.addressLine1 : "")
-    const [addressLine2, setAddressLine2] = useState(stateUser?.addressLine2 ? stateUser.addressLine2 : "")
-    const [city, setCity] = useState(stateUser?.city ? stateUser.city : "");
-    const [zipCode, setZipcode] = useState(stateUser?.zipCode ? stateUser.zipCode : "");
-    const [phone, setPhone] = useState(stateUser?.phone ? stateUser.phone : "");
+    const [firstName, setFirstName] = useState(stateUser?.firstName ? stateUser.firstName : null)
+    const [lastName, setLastName] = useState(stateUser?.lastName ? stateUser.lastName : null)
+    const [addressLine1, setAddressLine1] = useState(stateUser?.addressLine1 ? stateUser.addressLine1 : null)
+    const [addressLine2, setAddressLine2] = useState(stateUser?.addressLine2 ? stateUser.addressLine2 : null)
+    const [city, setCity] = useState(stateUser?.city ? stateUser.city : null);
+    const [zipCode, setZipcode] = useState(stateUser?.zipCode ? stateUser.zipCode : null);
+    const [phone, setPhone] = useState(stateUser?.phone ? stateUser.phone : null);
 
-
-    const [paymentName, setPaymentName] = useState("");
-    const [paymentCard, setPaymentCard] = useState("");
-    const [paymentExpirationDate, setPaymentExpirationDate] = useState("");
 
 
     const [billingFirstName, setBillingFirstName] = useState("")
@@ -310,20 +309,65 @@ const Checkout = () => {
     const [billingZipCode, setBillingZipcode] = useState("");
     const [billingPhone, setBillingPhone] = useState("");
 
-    const updateCart = async () => {
+    const [continueToShippingButton, setContinueToShippingButton] = useState(true)
+    const [validPhoneNo, setValidPhoneNo] = useState(false)
+    const [phoneErrorMessage, setPhoneErrorMessage] = useState("")
+    const [firstNameErrorMessage, setFirstNameErrorMessage] = useState("")
+    const [lastNameErrorMessage, setLastNameErrorMessage] = useState("")
+    const [addressErrorMessage, setAddressErrorMessage] = useState("")
+    const [apartmentErrorMessage, setApartmentErrorMessage] = useState("")
+    const [cityErrorMessage, setCityErrorMessage] = useState("")
+    const [stateErrorMessage, setStateErrorMessage] = useState("")
+    const [zipCodeErrorMessage, setZipCodeErrorMessage] = useState("")
+
+    const [ctnShipDisabled, setCtnShipDisabled] = useState(true);
+
+    const [paymentName, setPaymentName] = useState("");
+    const [paymentCard, setPaymentCard] = useState("");
+    const [paymentExpirationDate, setPaymentExpirationDate] = useState("");
+    const [paymentCvv, setPaymentCvv] = useState("")
+
+    const [cardNumberErrorMessage, setCardNumberErrorMessage] = useState("")
+    const [cardNameErrorMessage, setCardNameErrorMessage] = useState("")
+    const [cardExpirationErrorMessage, setCardExpirationErrorMessage] = useState("")
+    const [cardCvvErrorMessage, setCardCvvErrorMessage] = useState("")
+
+    const [completeOrderDisabled, setCompleteOrderDisabled] = useState(true);
+
+
+    useEffect(() => {
+        let isFormInvalid = validateBeforeContinueToShipping(); //onLoad - false
+
+        let isDataAvailable = (firstName && lastName && addressLine1 && addressLine2 && city && zipCode && phone ? true : false);
+
+        setCtnShipDisabled(isFormInvalid || !isDataAvailable);
+
+    }, [stateUser, firstName, lastName, addressLine1, addressLine2, city, zipCode, phone]);
+
+    useEffect(() => {
+        let isPaymentInvalid = validateBeforeContinueToShipping(); //onLoad - false
+
+        let isPaymentDataAvailable = (paymentName && paymentCard && paymentExpirationDate && paymentCvv ? true : false);
+
+        setCompleteOrderDisabled(isPaymentInvalid || !isPaymentDataAvailable);
+
+    }, [paymentName, paymentCard, paymentExpirationDate, paymentCvv]);
+
+    const updateCart = () => {
+        console.log("Update Cart called")
         const cartData = {
             "products": [],
             "user": stateUser?._id
         }
         console.log("cartData", cartData)
-        let updatedCart = await fetch(URL, {
+        fetch(URL, {
             method: "PUT",
             headers: {
                 "Content-Type": "Application/json"
             },
             body: JSON.stringify(cartData),
         }).then(res => res.json())
-        console.log("updatedCart", updatedCart)
+        // console.log("updatedCart", updatedCart)
     }
 
 
@@ -367,6 +411,148 @@ const Checkout = () => {
         updateCart()
         navigate("/confirmation")
 
+    }
+
+    function validateCardNumber(cardNo) {
+        let cardNumberPattern = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
+        let cardNumberPatternChecked = cardNumberPattern.test(cardNo)
+        setPaymentCard(cardNo)
+        if (cardNumberPatternChecked) {
+            setCardNumberErrorMessage("")
+        } else {
+            setCardNumberErrorMessage("Please Enter a valida Card Number")
+        }
+
+    }
+
+    function validateCardName(cardName) {
+        let cardNamePattern = /^((?:[A-Za-z]+ ?){1,3})$/
+        let cardNameChecked = cardNamePattern.test(cardName)
+        setPaymentName(cardName)
+        if (cardNameChecked) {
+            setCardNameErrorMessage("")
+        } else {
+            setCardNameErrorMessage("Please Enter a vaild Name")
+        }
+    }
+
+    function validateCardCvv(cardCvv) {
+        let cardCvvPattern = /^[0-9]{3,4}$/
+        let cardCvvChecked = cardCvvPattern.test(cardCvv)
+        setPaymentCvv(cardCvv)
+        if (cardCvvChecked) {
+            setCardCvvErrorMessage("")
+        } else {
+            setCardCvvErrorMessage("Please Enter a valid CVV")
+        }
+    }
+
+    function validateCardExpiration(cardExpiration) {
+        let cardExpirationPattern = /^(?:0?[1-9]|1[0-2]) *\/ *[1-9][0-9]$/
+        let cardExpirationChecked = cardExpirationPattern.test(cardExpiration)
+        setPaymentExpirationDate(cardExpiration)
+        if (cardExpirationChecked) {
+            let expirationDate = "01/" + cardExpiration;
+            let expirationDateMoment = moment(expirationDate, "DD/MM/YY");
+            let isValidMoment = moment().isSameOrBefore(expirationDateMoment, "month")
+            if (isValidMoment) {
+                setCardExpirationErrorMessage("")
+            } else {
+                setCardExpirationErrorMessage("Expiration Date should be in Future")
+            }
+
+        } else {
+            setCardExpirationErrorMessage("Please Enter a valid Expiration")
+        }
+    }
+
+    function validateBeforeCompleteOrder() {
+        return (
+            (cardNameErrorMessage && cardNameErrorMessage.length > 0) ||
+            (cardNumberErrorMessage && cardNumberErrorMessage.length) > 0 ||
+            (cardExpirationErrorMessage && cardExpirationErrorMessage.length) > 0 ||
+            (cardCvvErrorMessage && cardCvvErrorMessage.length) > 0
+        )
+    }
+
+    function validatePhone(phoneNo) {
+        let phoneNoPattern = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+        let phoneNoChecked = phoneNoPattern.test(phoneNo)
+        setPhone(phoneNo)
+        if (phoneNoChecked) {
+            setPhoneErrorMessage("")
+        } else {
+            setPhoneErrorMessage("Please Enter a valid Phone No")
+        }
+
+    }
+
+    function validateFirstName(pFirstName) {
+        if (pFirstName.length === 0) {
+            setFirstNameErrorMessage("Please Enter First Name")
+        } else {
+            setFirstNameErrorMessage("")
+        }
+    }
+
+    function validateLastName(pLastName) {
+        if (pLastName.length === 0) {
+            setLastNameErrorMessage("Please Enter Last Name")
+        } else {
+            setLastNameErrorMessage("")
+        }
+    }
+
+    function validateAddress(pAddress) {
+        if (pAddress.length === 0) {
+            setAddressErrorMessage("Please Enter Address")
+        } else {
+            setAddressErrorMessage("")
+        }
+    }
+
+    function validateApartment(pApartment) {
+        if (pApartment.length === 0) {
+            setApartmentErrorMessage("Please Enter Aparment")
+        } else {
+            setApartmentErrorMessage("")
+        }
+    }
+
+    function validateCity(pCity) {
+        if (pCity.length === 0) {
+            setCityErrorMessage("Please Enter City")
+        } else {
+            setCityErrorMessage("")
+        }
+    }
+
+    function validateState(pState) {
+        if (pState.length === 0) {
+            setStateErrorMessage("Please Enter State")
+        } else {
+            setStateErrorMessage("")
+        }
+    }
+
+    function validateZipCode(pZipCode) {
+        if (pZipCode.length === 0) {
+            setZipCodeErrorMessage("Please Enter ZipCode")
+        } else {
+            setZipCodeErrorMessage("")
+        }
+    }
+    function validateBeforeContinueToShipping() {
+        return (
+            (firstNameErrorMessage && firstNameErrorMessage.length > 0) ||
+            (lastNameErrorMessage && lastNameErrorMessage.length) > 0 ||
+            (addressErrorMessage && addressErrorMessage.length) > 0 ||
+            (apartmentErrorMessage && apartmentErrorMessage.length) > 0 ||
+            (cityErrorMessage && cityErrorMessage.length) > 0 ||
+            (stateErrorMessage && stateErrorMessage.length > 0) ||
+            (zipCodeErrorMessage && zipCodeErrorMessage.length > 0) ||
+            (phoneErrorMessage && phoneErrorMessage.length) > 0
+        )
     }
 
 
@@ -449,24 +635,34 @@ const Checkout = () => {
                             <div className="checkout-shipping-adrs-name">
                                 <TextField
                                     required
+                                    error={firstNameErrorMessage.length !== 0}
                                     id="outlined-required"
                                     className="checkout-email-textbox"
                                     label="First Name"
                                     placeholder="First Name"
                                     value={firstName}
-                                    onChange={(event) => setFirstName(event.target.value)}
+                                    onChange={(event) => {
+                                        setFirstName(event.target.value)
+                                        validateFirstName(event.target.value)
+                                    }}
+                                    helperText={firstNameErrorMessage}
                                 // defaultValue="Hello World"
                                 />
                             </div>
                             <div className="checkout-shipping-adrs-name">
                                 <TextField
                                     required
+                                    error={lastNameErrorMessage.length !== 0}
                                     id="outlined-required"
                                     className="checkout-email-textbox"
                                     label="Last Name"
                                     placeholder="Last Name"
                                     value={lastName}
-                                    onChange={(event) => setLastName(event.target.value)}
+                                    onChange={(event) => {
+                                        setLastName(event.target.value)
+                                        validateLastName(event.target.value)
+                                    }}
+                                    helperText={lastNameErrorMessage}
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -475,12 +671,17 @@ const Checkout = () => {
                         <div className="checkout-address" style={{ marginTop: '14px' }}>
                             <TextField
                                 required
+                                error={addressErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox"
                                 label="Address"
                                 placeholder="Address"
-                                onChange={(event) => setAddressLine1(event.target.value)}
+                                onChange={(event) => {
+                                    setAddressLine1(event.target.value)
+                                    validateAddress(event.target.value)
+                                }}
                                 value={addressLine1}
+                                helperText={addressErrorMessage}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -488,12 +689,17 @@ const Checkout = () => {
                         <div className="checkout-apartment" style={{ marginTop: '14px' }}>
                             <TextField
                                 required
+                                error={apartmentErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox"
                                 label="Apartment, suite, etc."
                                 placeholder="Apartment"
-                                onChange={(event) => setAddressLine2(event.target.value)}
+                                onChange={(event) => {
+                                    setAddressLine2(event.target.value)
+                                    validateApartment(event.target.value)
+                                }}
                                 value={addressLine2}
+                                helperText={apartmentErrorMessage}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -501,15 +707,22 @@ const Checkout = () => {
                         <div className="checkout-shipping-address-city-state-zip">
                             <TextField
                                 required
+                                error={cityErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-adrs-csz"
                                 label="City"
                                 placeholder="City"
-                                onChange={(event) => setCity(event.target.value)}
+                                onChange={(event) => {
+                                    setCity(event.target.value)
+                                    validateCity(event.target.value)
+                                }}
                                 value={city}
+                                helperText={cityErrorMessage}
                             // defaultValue="Hello World"
                             />
                             <TextField
+                                required
+                                error={stateErrorMessage.length !== 0}
                                 id="filled-select-currency-native"
                                 className="checkout-country checkout-adrs-csz"
                                 select
@@ -519,6 +732,7 @@ const Checkout = () => {
                                 SelectProps={{
                                     native: true,
                                 }}
+                                helperText={stateErrorMessage}
                             // helperText="Please select your region/country"
 
                             >
@@ -530,12 +744,17 @@ const Checkout = () => {
                             </TextField>
                             <TextField
                                 required
+                                error={zipCodeErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox checkout-adrs-csz"
                                 label="ZIP code"
                                 placeholder="ZIP code"
-                                onChange={(event) => setZipcode(event.target.value)}
+                                onChange={(event) => {
+                                    setZipcode(event.target.value)
+                                    validateZipCode(event.target.value)
+                                }}
                                 value={zipCode}
+                                helperText={zipCodeErrorMessage}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -543,12 +762,15 @@ const Checkout = () => {
                         <div className="checkout-phone" style={{ marginTop: '14px' }}>
                             <TextField
                                 required
+                                error={phoneErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox"
                                 label="Phone"
                                 placeholder="Phone"
-                                onChange={(event) => setPhone(event.target.value)}
+                                onChange={(event) => validatePhone(event.target.value)}
                                 value={phone}
+                                helperText={phoneErrorMessage}
+
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -563,6 +785,7 @@ const Checkout = () => {
                                         setCheckoutStep(1)
 
                                     }}
+                                    disabled={ctnShipDisabled}
                                     style={{ backgroundColor: 'black', color: 'white' }}>Continue to Shipping</Button>
                             </div>
                         </div>
@@ -618,22 +841,27 @@ const Checkout = () => {
                         <div className="checkout-payment-name" style={{ marginTop: '14px' }}>
                             <TextField
                                 required
+                                error={cardNameErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox"
                                 label="Name on Card"
                                 placeholder="Name on Card"
+                                onChange={(event) => validateCardName(event.target.value)}
+                                helperText={cardNameErrorMessage}
                             // defaultValue="Hello World"
                             />
                         </div>
                         <div className="checkout-payment-card-no" style={{ marginTop: '14px' }}>
                             <TextField
                                 required
+                                error={cardNumberErrorMessage.length !== 0}
                                 id="outlined-required"
                                 className="checkout-email-textbox"
                                 label="Card Number"
                                 placeholder="Card Number"
-                                onChange={(event) => setPaymentCard(event.target.value)}
+                                onChange={(event) => validateCardNumber(event.target.value)}
                                 value={paymentCard}
+                                helperText={cardNumberErrorMessage}
                             // defaultValue="Hello World"
                             />
                         </div>
@@ -641,24 +869,27 @@ const Checkout = () => {
                             <div className="checkout-payment-expiry-date" style={{ marginTop: '14px' }}>
                                 <TextField
                                     required
+                                    error={cardExpirationErrorMessage.length !== 0}
                                     id="outlined-required"
                                     className="checkout-email-textbox"
                                     label="Expiry Date"
                                     placeholder="MM/YY"
-                                    onChange={(event) => setPaymentExpirationDate(event.target.value)}
+                                    onChange={(event) => validateCardExpiration(event.target.value)}
                                     value={paymentExpirationDate}
+                                    helperText={cardExpirationErrorMessage}
                                 // defaultValue="Hello World"
                                 />
                             </div>
                             <div className="checkout-payment-security-code" style={{ marginTop: '14px' }}>
                                 <TextField
                                     required
+                                    error={cardCvvErrorMessage.length !== 0}
                                     id="outlined-required"
                                     className="checkout-email-textbox"
                                     label="Security Code"
                                     placeholder="CVV"
-                                    onChange={(event) => (event.target.value)}
-
+                                    onChange={(event) => validateCardCvv(event.target.value)}
+                                    helperText={cardCvvErrorMessage}
                                 // defaultValue="Hello World"
                                 />
                             </div>
@@ -829,6 +1060,7 @@ const Checkout = () => {
                                 </div>
                                 <div >
                                     <Button
+                                        disabled={completeOrderDisabled}
                                         onClick={() => {
                                             handleOrder()
                                         }}

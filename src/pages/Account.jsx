@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
-import { setCart, setUser, updateUser } from "../reducer/mainReducer";
+import { setCart, setUser, updateUser, mergeCart, clearStateForLogout } from "../reducer/mainReducer";
 const Account = () => {
     const { user, isAuthenticated } = useAuth0();
 
@@ -14,14 +14,17 @@ const Account = () => {
 
     const { logout } = useAuth0();
 
-    const URL = "http://localhost:4000/";
+    const URL = " https://ecom-midaz-ms-95.herokuapp.com/";
 
 
     const stateUser = useSelector((state) => state.main.user);
+    const cart = useSelector((state) => state.main.cart);
     const dispatch = useDispatch();
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+
+    const [orderList, setOrderList] = useState([]);
 
 
     async function getUserDetails() {
@@ -34,7 +37,8 @@ const Account = () => {
                     userId: user.email,
                     email: user.email,
                 }
-                data = await fetch(URL, {
+                console.log("userObj :: ", userObj);
+                data = await fetch(URL + "user", {
                     method: "POST",
                     headers: {
                         "Content-Type": "Application/json"
@@ -48,7 +52,12 @@ const Account = () => {
             let cartDataFromDB = await fetch(URL + "cart/" + `?userIdParams=${data._id}`).then(res => res.json())
             dispatch(setUser(data));
             console.log("cartDataFromDB", cartDataFromDB)
-            dispatch(setCart(cartDataFromDB[0].products))
+            console.log("cartDataFromState", cart)
+            dispatch(mergeCart(cartDataFromDB[0].products))
+            //dispatch(setCart(cartDataFromDB[0].products))
+            let orderListFromDB = await fetch(URL + "user/order" + `?emailParams=${user.email}`).then(res => res.json());
+            setOrderList(orderListFromDB)
+            console.log("orderListFromDB", orderListFromDB)
         }
     }
 
@@ -78,7 +87,10 @@ const Account = () => {
         <div style={{ padding: '80px', background: '#f9f9fb' }}>
             <div style={{ textAlign: 'right', justifyContent: 'right', width: '98%' }} >
                 <a style={{ color: 'black', textAlign: 'right', justifyContent: 'right' }}
-                    onClick={() => logout({ returnTo: `${window.location.protocol}//${window.location.host}` })}
+                    onClick={() => {
+                        dispatch(clearStateForLogout());
+                        logout({ returnTo: `${window.location.protocol}//${window.location.host}` });
+                    }}
                     href="#">Logout</a>
             </div>
             <div style={{ display: 'flex', justifyContent: 'left' }}>
@@ -129,20 +141,21 @@ const Account = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                        <td>Desc</td>
-                                    </tr>
+                                    {orderList && orderList.length ? orderList.map((element, index) => {
+                                        return (
+                                            <tr key={`row-${index}`}>
+                                                <td key={`col-1-${index}`}>{element.orderId}</td>
+                                                <td key={`col-2-${index}`}>{element.orderDate.toString().substring(0, 10)}</td>
+                                                <td key={`col-3-${index}`}>Complete</td>
+                                                <td key={`col-4-${index}`}>Processing</td>
+                                                <td key={`col-5-${index}`}>${element.orderTotal}</td>
+                                            </tr>
+                                        )
+                                    }) : <tr>
+                                        <td colspan="5">No Orders Yet</td>
+                                    </tr>}
+
+
                                 </tbody>
                             </Table>
                         </Col>
@@ -151,7 +164,7 @@ const Account = () => {
                 </Col>
                 <Col style={{ padding: '50px' }}>
                     <Row>
-                        <Col style={{ textAlign: 'left', fontWeight: '600' }}>ACCOUNT DETAILS</Col>
+                        <Col style={{ textAlign: 'left', fontWeight: '600' }}>{stateUser?.firstName || stateUser?.lastName ? "ACCOUNT DETAILS" : ""}</Col>
                     </Row>
                     <Row>
                         <Col style={{ textAlign: 'left', marginTop: '20px' }}>{stateUser?.firstName ? stateUser.firstName : ""} {stateUser?.lastName ? stateUser.lastName : ""}</Col>

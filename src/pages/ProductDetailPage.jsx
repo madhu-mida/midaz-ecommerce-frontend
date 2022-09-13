@@ -47,7 +47,7 @@ const ProductDetailPage = () => {
         setBigImage(imgUrl)
     }
 
-    const URL = "http://localhost:4000/product/";
+    const URL = " https://ecom-midaz-ms-95.herokuapp.com/product/";
 
     const navigate = useNavigate();
 

@@ -1,9 +1,9 @@
-import active from "./category-images/active.jpeg";
-import coats from "./category-images/coats.jpeg";
-import dress from "./category-images/dress.jpeg";
-import skirt from "./category-images/skirt.jpeg";
-import tops from "./category-images/tops.jpeg";
-import sweater from "./category-images/sweater.jpeg";
+import active from "./category-images/new-active.jpeg";
+import coats from "./category-images/new-coats.jpeg";
+import dress from "./category-images/new-dress.webp";
+import skirt from "./category-images/new-skirt.jpeg";
+import tops from "./category-images/new-tops.jpeg";
+import sweater from "./category-images/new-sweater.webp";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 
