@@ -111,7 +111,15 @@ export const mainReducer = createSlice({
         mergeCart: (state, action) => {
             console.log("MERGED_IN :: ", JSON.stringify(state.cart), JSON.stringify(action.payload));
             const result = Object.values([...state.cart, ...action.payload].reduce((acc, { productId, quantity, name, price, img, id, size }) => {
-                acc[productId] = { productId, quantity: (acc[productId] ? acc[productId].quantity : 0) + quantity, name, price, img, id, size };
+                acc[productId] = {
+                    productId,
+                    quantity: (acc[productId] ? acc[productId].quantity : 0) + quantity,
+                    name,
+                    price,
+                    img,
+                    id,
+                    size
+                };
                 return acc;
             }, {}));
             console.log("MERGED_RESULT :: ", result);
