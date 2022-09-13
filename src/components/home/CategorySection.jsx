@@ -25,7 +25,7 @@ const CategorySection = () => {
                         </Link>
                     </div>
                     <div className="category-name">
-                        <Link to="/products/active-wear" style={{ color: 'black', textDecoration: 'none' }}>
+                        <Link to="/products/active-wear" className="category-header" style={{ color: 'black', textDecoration: 'none' }}>
                             <span>ACTIVE WEAR</span>
                         </Link>
                         {/* <span onClick={() => navigate("/products/active-wear", { replace: true })}>ACTIVE WEAR</span> */}

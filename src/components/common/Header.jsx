@@ -140,32 +140,32 @@ const Header = () => {
 
                                     >
                                         <MenuItem>
-                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/active-wear">
                                                 Active Wear
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/coats-jackets">
                                                 Coats & Jackets
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/dresses">
                                                 Dresses
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/skirts">
                                                 Skirts
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/sweaters">
                                                 Sweaters
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/tops">
                                                 Tops
                                             </Link>
                                         </MenuItem>
@@ -195,32 +195,32 @@ const Header = () => {
 
                                     >
                                         <MenuItem>
-                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/active-wear">
                                                 Active Wear
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/coats-jackets">
                                                 Coats & Jackets
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/dresses">
                                                 Dresses
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/skirts">
                                                 Skirts
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/sweaters">
                                                 Sweaters
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/tops">
                                                 Tops
                                             </Link>
                                         </MenuItem>
@@ -251,32 +251,32 @@ const Header = () => {
 
                                     >
                                         <MenuItem>
-                                            <Link style={{ color: 'black' }} to="/products/active-wear">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/active-wear">
                                                 Active Wear
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/coats-jackets">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/coats-jackets">
                                                 Coats & Jackets
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/dresses">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/dresses">
                                                 Dresses
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/skirts">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/skirts">
                                                 Skirts
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/sweaters">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/sweaters">
                                                 Sweaters
                                             </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                            <Link style={{ color: 'black' }} to="/products/tops">
+                                            <Link style={{ color: 'black', textDecoration: 'none' }} to="/products/tops">
                                                 Tops
                                             </Link>
                                         </MenuItem>
