@@ -1,3 +1,7 @@
 [[redirects]]
+  from = "/account"
+  to = "/account"
+  status = 200
+[[redirects]]
   from = "/*"
   to = "/index.html"
